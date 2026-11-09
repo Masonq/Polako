@@ -2,6 +2,11 @@ import { createContext, useContext } from 'react'
 
 export const DICT = {
   sr: {
+    rail: 'Na vešalici', railHint: 'Prevuci', look: 'Probaj look', lookSub: 'Dodirni tačku na odeći.', lookPair: 'Fraza za dvoje: jedna počinje, druga završava.',
+    addLook: 'Dodaj ceo look', inLook: 'U ovom looku', fav: 'Omiljeno', favEmpty: 'Ovde čuvaš fraze koje ti se sviđaju. Dodirni srce na bilo kojoj.',
+    saved: 'Sačuvano u omiljeno', unsaved: 'Uklonjeno iz omiljenog', back: 'Nazad', open: 'Otvori',
+    stmt1: 'Ne žurimo.', stmt2: 'Pravimo da traje.', stmtText: 'Debeo pamuk, tonska štampa ili vez. Svaku stvar pravimo tek kad je poručiš.',
+    pieces: (n) => `${n} kom.`, lookAdded: 'Look je u korpi',
     catalog: 'Katalog', sizes: 'Veličine', cart: 'Korpa', collSr: 'Srpska', collRu: 'Ruska', all: 'Sve',
     heroSub: 'Majice, duksevi i hudi sa frazama koje svi znaju, a niko ne nosi. Tonska štampa ili vez, plaćanje pouzećem.',
     toCatalog: 'Pogledaj katalog', choose: 'Izaberi model', shareThis: 'Pošalji nekome',
@@ -31,6 +36,11 @@ export const DICT = {
     footer: 'Polako. Stići ćemo.', loading: 'Učitavamo',
   },
   ru: {
+    rail: 'На вешалке', railHint: 'Листай', look: 'Примерь образ', lookSub: 'Нажми на точку на одежде.', lookPair: 'Фраза на двоих: одна начинает, вторая заканчивает.',
+    addLook: 'Добавить весь образ', inLook: 'В этом образе', fav: 'Избранное', favEmpty: 'Здесь хранятся фразы, которые понравились. Нажми сердце на любой.',
+    saved: 'Сохранено в избранное', unsaved: 'Убрано из избранного', back: 'Назад', open: 'Открыть',
+    stmt1: 'Не спешим.', stmt2: 'Делаем, чтобы носилось.', stmtText: 'Плотный хлопок, тоновая печать или вышивка. Каждую вещь делаем после твоего заказа.',
+    pieces: (n) => `${n} шт.`, lookAdded: 'Образ в корзине',
     catalog: 'Каталог', sizes: 'Размеры', cart: 'Корзина', collSr: 'Сербская', collRu: 'Русская', all: 'Все',
     heroSub: 'Футболки, свитшоты и худи с фразами, которые все знают, но никто не носит. Тоновая печать или вышивка, оплата при получении.',
     toCatalog: 'Смотреть каталог', choose: 'Выбрать модель', shareThis: 'Отправить кому-то',

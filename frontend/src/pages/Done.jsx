@@ -7,7 +7,7 @@ export default function Done() {
     <section className="wrap empty done">
       <h1 className="h2">{t.thanks}</h1>
       <p>{t.thanksText(number)}</p>
-      <Link className="btn btn--dark" to="/#katalog">{t.continue}</Link>
+      <Link className="btn btn--pist" to="/#katalog">{t.continue}</Link>
     </section>
   )
 }

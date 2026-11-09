@@ -1,7 +1,9 @@
 import { useEffect, useMemo, useState, useRef } from 'react'
 import { Routes, Route, Link, NavLink, useLocation } from 'react-router-dom'
 import { DICT, LangCtx, useT } from './i18n'
-import { CartCtx, KEY, load, itemKey } from './cart'
+import { CartCtx, KEY, load, itemKey, FavCtx, FAV_KEY, loadFav } from './cart'
+import { Heart } from './components/Picker'
+import Favorites from './pages/Favorites'
 import { api } from './api'
 import Logo from './components/Logo'
 import Home from './pages/Home'
@@ -11,19 +13,23 @@ import Done from './pages/Done'
 import Sizes from './pages/Sizes'
 import Admin from './pages/Admin'
 
-function Header({ count }) {
+function Header({ count, favCount }) {
   const { t, lang, setLang } = useT()
   return (
     <header className="hdr">
       <div className="hdr__in">
         <Link to="/" className="hdr__logo" aria-label="polako. početna"><Logo mode="live" color="var(--pistachio)" /></Link>
         <nav className="hdr__nav">
-          <NavLink to="/#katalog" className="hdr__link hide-sm">{t.catalog}</NavLink>
+          <Link to="/#katalog" className="hdr__link hide-sm">{t.catalog}</Link>
           <NavLink to="/velicine" className="hdr__link hide-sm">{t.sizes}</NavLink>
           <div className="lang" role="group" aria-label="Jezik">
             <button className={lang === 'sr' ? 'on' : ''} onClick={() => setLang('sr')}>SR</button>
             <button className={lang === 'ru' ? 'on' : ''} onClick={() => setLang('ru')}>RU</button>
           </div>
+          <Link to="/omiljeno" className="cartbtn" aria-label={`${t.fav}: ${favCount}`}>
+            <Heart on={false} />
+            {favCount > 0 && <span className="cartbtn__n">{favCount}</span>}
+          </Link>
           <Link to="/korpa" className="cartbtn" aria-label={`${t.cart}: ${count}`}>
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8h12l-1 12H7L6 8Z M9 8a3 3 0 0 1 6 0" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" strokeLinecap="round"/></svg>
             {count > 0 && <span className="cartbtn__n">{count}</span>}
@@ -54,6 +60,7 @@ function Footer() {
         <nav className="ftr__nav">
           <Link to="/#katalog">{t.catalog}</Link>
           <Link to="/velicine">{t.sizes}</Link>
+          <Link to="/omiljeno">{t.fav}</Link>
           <Link to="/korpa">{t.cart}</Link>
         </nav>
         <p className="ftr__copy">© {new Date().getFullYear()} polako.</p>
@@ -93,15 +100,22 @@ export default function App() {
     clear: () => setItems([]),
   }), [items])
   const count = items.reduce((a, b) => a + b.qty, 0)
+  const [favs, setFavs] = useState(loadFav)
+  useEffect(() => { localStorage.setItem(FAV_KEY, JSON.stringify(favs)) }, [favs])
+  const fav = useMemo(() => ({
+    items: favs,
+    has: (slug) => favs.some((f) => f.slug === slug),
+    toggle: (it) => setFavs((xs) => (xs.some((f) => f.slug === it.slug) ? xs.filter((f) => f.slug !== it.slug) : [{ slug: it.slug, garment: it.garment, color: it.color }, ...xs])),
+  }), [favs])
   const isAdmin = useLocation().pathname.startsWith('/admin')
 
   return (
     <LangCtx.Provider value={{ lang, t: DICT[lang], setLang }}>
-      <CartCtx.Provider value={cart}>
+      <CartCtx.Provider value={cart}><FavCtx.Provider value={fav}>
         <ScrollTop />
         {isAdmin ? <Admin /> : (
           <>
-            <Header count={count} />
+            <Header count={count} favCount={favs.length} />
             <main>
               <Routes>
                 <Route path="/" element={<Home catalog={catalog} err={catErr} retry={loadCatalog} />} />
@@ -109,18 +123,19 @@ export default function App() {
                 <Route path="/korpa" element={<CartPage catalog={catalog} />} />
                 <Route path="/hvala/:number" element={<Done />} />
                 <Route path="/velicine" element={<Sizes />} />
+                <Route path="/omiljeno" element={<Favorites catalog={catalog} />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </main>
             <Footer />
           </>
         )}
-      </CartCtx.Provider>
+      </FavCtx.Provider></CartCtx.Provider>
     </LangCtx.Provider>
   )
 }
 
 function NotFound() {
   const { t } = useT()
-  return <section className="wrap empty"><p>{t.notFound}</p><Link className="btn" to="/">{t.backHome}</Link></section>
+  return <section className="wrap empty"><p>{t.notFound}</p><Link className="btn btn--pist" to="/">{t.backHome}</Link></section>
 }

@@ -3,7 +3,8 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useT, rsd } from '../i18n'
 import { useCart, itemKey, unitPrice } from '../cart'
 import { api } from '../api'
-import Garment from '../components/Garment'
+import PrintPhoto from '../components/PrintPhoto'
+import { productPhoto } from '../components/photos'
 import Loader from '../components/Loader'
 
 const FIELDS = ['name', 'phone', 'city', 'postal', 'address']
@@ -18,7 +19,7 @@ export default function CartPage({ catalog }) {
   const [err, setErr] = useState('')
   const s = catalog?.settings
 
-  if (!cart.items.length) return <section className="wrap empty"><p>{t.emptyCart}</p><Link className="btn btn--dark" to="/#katalog">{t.catalog}</Link></section>
+  if (!cart.items.length) return <section className="wrap empty"><p>{t.emptyCart}</p><Link className="btn btn--pist" to="/#katalog">{t.catalog}</Link></section>
 
   const subtotal = cart.items.reduce((a, i) => a + unitPrice(s, i.garment, i.tech) * i.qty, 0)
   const delivery = s ? (subtotal >= s.free_delivery_from ? 0 : s.delivery) : 0
@@ -60,7 +61,7 @@ export default function CartPage({ catalog }) {
             const k = itemKey(i)
             return (
               <li key={k} className="ci">
-                <Link to={`/p/${i.slug}?g=${i.garment}&c=${i.color}`} className={`ci__art card__art--${i.color}`}><Garment type={i.garment} color={i.color} tech={i.tech} line1={i.line1} line2={i.line2} /></Link>
+                <Link to={`/p/${i.slug}?g=${i.garment}&c=${i.color}`} className="ci__art"><PrintPhoto photo={productPhoto(i.garment, i.color, true)} line1={i.line1} line2={i.line2} tech={i.tech} /></Link>
                 <div className="ci__body">
                   <p className="ci__title">{i.line1} {i.line2}</p>
                   <p className="ci__sub">{t[i.garment]}, {t[i.color].toLowerCase()}, {i.size}, {t[i.tech].toLowerCase()}</p>
@@ -92,7 +93,7 @@ export default function CartPage({ catalog }) {
           {s && delivery > 0 && <p className="co__note">{t.freeFrom(rsd(s.free_delivery_from))}</p>}
           <p className="co__note">{t.payCod}</p>
           {err && <p className="co__err" role="alert">{err}</p>}
-          <button className="btn btn--dark co__btn" disabled={busy}>{busy ? <Loader small label={t.placing} /> : t.placeOrder}</button>
+          <button className="btn btn--pist co__btn" disabled={busy}>{busy ? <Loader small label={t.placing} /> : t.placeOrder}</button>
         </form>
       </div>
     </section>
